@@ -14,19 +14,12 @@ const App = () => {
   const [filteredPerson, setFiltered] = useState(persons)
   const [filter, setFilter] = useState('')
 
-  const searchFilter = (event) => {
-    event.preventDefault()
-   const filterNames = persons.filter(person => 
-    person.name.toLowerCase().includes(filter.toLowerCase())
-   )
-   console.log(filterNames)
-   setFiltered(filterNames)
-  }
+  
 
   const addName = (event) => {
     event.preventDefault()
     let nameExists = false
-    filteredPerson.forEach(person => {
+    persons.forEach(person => {
       if (person.name === newName){
         nameExists = true
       }
@@ -36,7 +29,8 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-      setFiltered(filteredPerson.concat({name: newName,number: newNum,id: filteredPerson.length + 1}))
+      const obj = {name: newName,number: newNum,id: persons.length + 1}
+      setPersons(persons.concat(obj))
     }
     
     setNewName('')
@@ -52,18 +46,23 @@ const App = () => {
     setNewNum(event.target.value)
   }
 
-  const handleEventFilter = (event) => {
-    setFilter(event.target.value)
+  const handleFilterEvent = (event) => {
+    const filterValue = event.target.value
+    setFilter(filterValue)
+    if (filterValue === '') {
+      setFiltered(persons)
+    }
+    else {
+      const filteredNames = persons.filter(person => person.name.toLowerCase().includes(event.target.value.toLowerCase()))
+      setFiltered(filteredNames)
+    }
+    
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        <form onSubmit={searchFilter}>
-          filter shown with <input value={filter} onChange={handleEventFilter}/>
-        </form>
-      </div>
+      filter shown with <input value={filter} onChange={handleFilterEvent}/>
       <h2>add a new</h2>
       <form onSubmit={addName}>
         <div>
