@@ -1,11 +1,15 @@
 import { useState } from "react"
 
-const Person = ({person}) => <p>{person.name}</p>
+const Person = ({person}) => <p>{person.name} {person.number}</p>
 const App = () => {
   const [persons, setPersons] = useState([
-    {name: 'Arto Hellas'}
+    {
+      name: 'Arto Hellas',
+      number: '23-22-2222222'
+    }
   ])
   const [newName, setNewName] = useState('')
+  const [newNum, setNewNum] = useState('')
 
   const addName = (event) => {
     event.preventDefault()
@@ -20,27 +24,37 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-      setPersons(persons.concat({name: newName}))
+      setPersons(persons.concat({name: newName,number: newNum}))
     }
+    
     setNewName('')
+    setNewNum('')
   }
-  const handleEvent = (event) => {
+
+  const handleEventName = (event) => {
     setNewName(event.target.value)
     console.log(newName);
-    
   }
+
+  const handleEventNum = (event) => {
+    setNewNum(event.target.value)
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
       <form onSubmit={addName}>
         <div>
-          name: <input value={newName} onChange={handleEvent}/>
+          name: <input value={newName} onChange={handleEventName}/>
+        </div>
+        <div>
+          number: <input value={newNum} onChange={handleEventNum}/>
         </div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
-      <div>debug: {newName}</div>
+      {/* <div>debug: {newName}</div> */}
       <h2>Numbers</h2>
       {persons.map(person => 
         <Person person={person} key={person.name}/>
