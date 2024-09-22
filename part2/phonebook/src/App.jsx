@@ -15,6 +15,7 @@ const App = () => {
         nameExists = true
       }
     })
+    //to check if it already exists
     if (nameExists) {
       alert(`${newName} is already added to phonebook`)
     }
