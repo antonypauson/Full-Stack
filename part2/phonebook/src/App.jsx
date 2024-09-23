@@ -30,7 +30,9 @@ const App = () => {
     }
     else {
       const obj = {name: newName,number: newNum,id: persons.length + 1}
-      setPersons(persons.concat(obj))
+      const updatedPersons = persons.concat(obj)
+      setPersons(updatedPersons)
+      setFiltered(updatedPersons)
     }
     
     setNewName('')
@@ -39,7 +41,6 @@ const App = () => {
 
   const handleEventName = (event) => {
     setNewName(event.target.value)
-    console.log(newName);
   }
 
   const handleEventNum = (event) => {
@@ -49,7 +50,7 @@ const App = () => {
   const handleFilterEvent = (event) => {
     const filterValue = event.target.value
     setFilter(filterValue)
-    if (filterValue === '') {
+    if (filter === '') {
       setFiltered(persons)
     }
     else {
