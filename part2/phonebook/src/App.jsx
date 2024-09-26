@@ -54,11 +54,9 @@ const App = () => {
   
   //handling data from server using hook state
   useEffect(() => {
-    console.log("EFFECT in")
     axios
       .get('http://localhost:3001/persons')
       .then(response => {
-        console.log('promise fullfilled')
         setPersons(response.data)
         setFiltered(response.data)
       })
@@ -78,9 +76,15 @@ const App = () => {
     }
     else {
       const obj = {name: newName,number: newNum,id: persons.length + 1}
-      const updatedPersons = persons.concat(obj)
-      setPersons(updatedPersons)
-      setFiltered(updatedPersons)
+      
+      axios
+        .post('http://localhost:3001/persons', obj)
+        .then(response => {
+          const updatedPersons = persons.concat(response.data)
+          setPersons(updatedPersons)
+          setFiltered(updatedPersons)
+        })
+
     }
     
     setNewName('')
