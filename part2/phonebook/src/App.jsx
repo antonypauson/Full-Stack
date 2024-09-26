@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import axios from 'axios'
+import personServices from './services/persons'
 
 const Persons = ({persons}) => {
   return(
@@ -54,11 +55,11 @@ const App = () => {
   
   //handling data from server using hook state
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-        setFiltered(response.data)
+    
+    personServices.getAll()
+      .then(intialPersons=> {
+        setPersons(intialPersons)
+        setFiltered(intialPersons)
       })
   }, [])
 
@@ -77,10 +78,10 @@ const App = () => {
     else {
       const obj = {name: newName,number: newNum,id: persons.length + 1}
       
-      axios
-        .post('http://localhost:3001/persons', obj)
-        .then(response => {
-          const updatedPersons = persons.concat(response.data)
+      
+      personServices.create(obj)
+        .then(newPersons => {
+          const updatedPersons = persons.concat(newPersons)
           setPersons(updatedPersons)
           setFiltered(updatedPersons)
         })
