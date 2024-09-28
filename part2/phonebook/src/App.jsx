@@ -92,11 +92,11 @@ const App = () => {
         console.log(newName, 'will be updated!')
         const upPerson = persons.find(p => p.id === upId)
         const changedPersons = {...upPerson, number: newNum}
-
-        axios.put(`http://localhost:3001/persons/${upId}`, changedPersons)
-        .then(response => {
-          setFiltered(persons.map(n => n.id !== upId ? n : response.data))
+        personServices.update(upId, changedPersons)
+        .then(returnedPerson => {
+          setFiltered(persons.map(n => n.id !== upId ? n : returnedPerson))
         })
+        
       }
     }
     else {
