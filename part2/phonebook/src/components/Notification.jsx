@@ -1,4 +1,5 @@
 const Notification = ({message}) => {
+
     const notiStyle = {
         backgroundColor: '#f0efed',
         color: '#47e324',
@@ -6,12 +7,10 @@ const Notification = ({message}) => {
         borderRadius: 10,
         padding: 10,
         marginBottom: 15
-
     }
-    if (message === null){
+    if (message === null) {
       return null
     }
-    
     return (
       <div style={notiStyle}>
         {message}

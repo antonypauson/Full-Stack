@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import personServices from './services/persons'
 import Notification from "./components/Notification"
+import Error from "./components/Error"
 
 const Persons = ({persons, deleteName}) => {
   return(
@@ -45,7 +46,6 @@ const PersonForm = ({addName, newName, handleEventName, newNum, handleEventNum})
   )
 }
 
-
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -53,6 +53,8 @@ const App = () => {
   const [filteredPerson, setFiltered] = useState(persons)
   const [filter, setFilter] = useState('')
   const [error, setError] = useState(null)
+  const [error2, setError2] = useState(null)
+
   
   //handling data from server using hook state
   useEffect(() => {
@@ -64,6 +66,7 @@ const App = () => {
   }, [])
 
 
+
   const deleteName = (id,name) => {
     console.log(`delete ${id}`)
 
@@ -73,6 +76,7 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter(person => person.id !== id))
         setFiltered(filteredPerson.filter(person => person.id !== id))
+        setError2(`Deleted ${name}`)
     })
 
   }
@@ -91,7 +95,6 @@ const App = () => {
     //to check if it already exists
     if (nameExists) {
       if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
-        console.log(newName, 'will be updated!')
         const upPerson = persons.find(p => p.id === upId)
         const changedPersons = {...upPerson, number: newNum}
         personServices.update(upId, changedPersons)
@@ -99,7 +102,11 @@ const App = () => {
           setFiltered(persons.map(n => n.id !== upId ? n : returnedPerson))
           setError(`Updated ${newName}`)
         })
-        
+        .catch(error => {
+          setError2(`Information of ${newName} has already been removed from server`)
+          setFiltered(persons.filter(n => n.id !== upId))
+          setPersons(persons.filter(n => n.id !== upId))
+        })
       }
     }
     else {
@@ -140,15 +147,18 @@ const App = () => {
   const errorHandling = () => {
     setTimeout(() => {
       setError(null)
-    }, 7000)
+    }, 10000)
+    setTimeout(() => {
+      setError2(null)
+    }, 10000)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Notification message={error} errorHandling={errorHandling()}/>
+      <Error message={error2} errorHandling={errorHandling()} />
       <Filter value={filter} onChange={handleFilterEvent}/>
-
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} handleEventName={handleEventName} newNum={newNum} handleEventNum={handleEventNum} />
      
