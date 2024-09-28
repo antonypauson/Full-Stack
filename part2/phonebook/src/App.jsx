@@ -2,17 +2,17 @@ import { useState, useEffect } from "react"
 import axios from 'axios'
 import personServices from './services/persons'
 
-const Persons = ({persons}) => {
+const Persons = ({persons, deleteName}) => {
   return(
     <div>
       {persons.map(person => 
-      <Person person={person} key={person.name}/>
+      <Person person={person} key={person.name} deleteName={() => deleteName(person.id, person.name)}/>
     )}
     </div>
     
   )
 }
-const Person = ({person}) => <p>{person.name} {person.number}</p>
+const Person = ({person, deleteName}) => <p>{person.name} {person.number} <button onClick={deleteName}>delete</button></p>
 
 const Filter = ({value, onChange}) => {
   return (
@@ -55,13 +55,26 @@ const App = () => {
   
   //handling data from server using hook state
   useEffect(() => {
-    
     personServices.getAll()
       .then(intialPersons=> {
         setPersons(intialPersons)
         setFiltered(intialPersons)
       })
   }, [])
+
+  const deleteName = (id,name) => {
+    console.log(`delete ${id}`)
+
+    if (window.confirm(`Delete ${name} ?`)) {
+      console.log("DELETED")
+      personServices.deletethis(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+        setFiltered(filteredPerson.filter(person => person.id !== id))
+    })
+
+  }
+}
 
   const addName = (event) => {
     event.preventDefault()
@@ -76,18 +89,14 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-      const obj = {name: newName,number: newNum,id: persons.length + 1}
-      
-      
+      const obj = {name: newName,number: newNum}
       personServices.create(obj)
         .then(newPersons => {
           const updatedPersons = persons.concat(newPersons)
           setPersons(updatedPersons)
           setFiltered(updatedPersons)
         })
-
     }
-    
     setNewName('')
     setNewNum('')
   }
@@ -123,7 +132,7 @@ const App = () => {
      
       {/* <div>debug: {newName}</div> */}
       <h2>Numbers</h2>
-      <Persons persons={filteredPerson}/>
+      <Persons persons={filteredPerson} deleteName={deleteName}/>
     </div>
   )
 }
