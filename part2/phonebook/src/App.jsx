@@ -79,14 +79,25 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     let nameExists = false
+    let upId = 0
     persons.forEach(person => {
-      if (person.name === newName){
+      if (person.name.toLowerCase() === newName.toLowerCase()){
         nameExists = true
+        upId = person.id
       }
     })
     //to check if it already exists
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        console.log(newName, 'will be updated!')
+        const upPerson = persons.find(p => p.id === upId)
+        const changedPersons = {...upPerson, number: newNum}
+
+        axios.put(`http://localhost:3001/persons/${upId}`, changedPersons)
+        .then(response => {
+          setFiltered(persons.map(n => n.id !== upId ? n : response.data))
+        })
+      }
     }
     else {
       const obj = {name: newName,number: newNum}
