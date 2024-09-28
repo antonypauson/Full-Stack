@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import axios from 'axios'
 import personServices from './services/persons'
 
 const Persons = ({persons, deleteName}) => {
