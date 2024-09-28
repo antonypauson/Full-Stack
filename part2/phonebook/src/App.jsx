@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import personServices from './services/persons'
+import Notification from "./components/Notification"
 
 const Persons = ({persons, deleteName}) => {
   return(
@@ -44,13 +45,14 @@ const PersonForm = ({addName, newName, handleEventName, newNum, handleEventNum})
   )
 }
 
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [filteredPerson, setFiltered] = useState(persons)
   const [filter, setFilter] = useState('')
-
+  const [error, setError] = useState(null)
   
   //handling data from server using hook state
   useEffect(() => {
@@ -60,6 +62,7 @@ const App = () => {
         setFiltered(intialPersons)
       })
   }, [])
+
 
   const deleteName = (id,name) => {
     console.log(`delete ${id}`)
@@ -94,6 +97,7 @@ const App = () => {
         personServices.update(upId, changedPersons)
         .then(returnedPerson => {
           setFiltered(persons.map(n => n.id !== upId ? n : returnedPerson))
+          setError(`Updated ${newName}`)
         })
         
       }
@@ -105,6 +109,7 @@ const App = () => {
           const updatedPersons = persons.concat(newPersons)
           setPersons(updatedPersons)
           setFiltered(updatedPersons)
+          setError(`Added ${newName}`)
         })
     }
     setNewName('')
@@ -132,15 +137,21 @@ const App = () => {
     
   }
 
+  const errorHandling = () => {
+    setTimeout(() => {
+      setError(null)
+    }, 7000)
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={error} errorHandling={errorHandling()}/>
       <Filter value={filter} onChange={handleFilterEvent}/>
 
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} handleEventName={handleEventName} newNum={newNum} handleEventNum={handleEventNum} />
      
-      {/* <div>debug: {newName}</div> */}
       <h2>Numbers</h2>
       <Persons persons={filteredPerson} deleteName={deleteName}/>
     </div>
