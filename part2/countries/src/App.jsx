@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react"
 import axios from 'axios'
 
-const Country = ({country}) => {
+const Country = ({country,handleShow}) => {
   if (country.length > 10) {
     return <p>Too many matches, specify another filter</p>
   }
   else if (country.length > 1) {
+    const msg = 'show'
     return (
       <ul>
         {country.map(n => 
-          <li>{n.name.common}</li>
+          <li>{n.name.common}<button onClick={() => handleShow(n.name.common)}>{'show'}</button>
+          </li>
+          
         )}
       </ul>
     )
@@ -25,7 +28,7 @@ const Country = ({country}) => {
         Languages:
         <ul>
         {Object.values(selectedCountry.languages).map((l,i) => 
-          <li>{l}</li>
+          <li key={i}>{l}</li>
         )}
         </ul>
         {selectedCountry.flag}
@@ -37,8 +40,9 @@ const Country = ({country}) => {
   else{
     return null
   }
-  
 }
+
+
 const App = () => {
 
   const [value, setValue] = useState('')
@@ -65,6 +69,13 @@ const App = () => {
   const handleChange = (event) => {
     setValue(event.target.value)
   }
+
+  const handleShow = (name) => {
+    const selectedCountry = country.find((c => c.name.common === name))
+    if (selectedCountry) {
+      setCountry([selectedCountry])
+    }
+  }
   return (
     <div>
       <h1>COUNTRIES</h1>
@@ -74,7 +85,7 @@ const App = () => {
       {status}
       <div>
         {/* {JSON.stringify(country)} */}
-        <Country country={country}/>
+        <Country country={country} handleShow={handleShow}/>
       </div>
     </div>
   )
